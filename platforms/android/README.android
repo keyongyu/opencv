@@ -1,1 +1,7 @@
 See http://opencv.org/platforms/android
+edit line 474 of <ndk>/build/cmake/android.toolchain.cmake  
+comment out option "-g" 
+
+mkdir <opencv>/build_android
+cd <opencv>/build_android
+python ../platforms/android/build_sdk.py  --sdk_path=~/Library/Android/sdk/ --ndk_path=/Users/keyong/Library/Android/sdk/ndk/22.0.6917172 --no_samples_build   .  ..

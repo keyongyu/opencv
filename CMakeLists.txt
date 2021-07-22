@@ -212,13 +212,16 @@ OCV_OPTION(OPENCV_ENABLE_NONFREE "Enable non-free algorithms" OFF)
 # 3rd party libs
 OCV_OPTION(OPENCV_FORCE_3RDPARTY_BUILD   "Force using 3rdparty code from source" OFF)
 OCV_OPTION(BUILD_ZLIB               "Build zlib from source"             (WIN32 OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
-OCV_OPTION(BUILD_TIFF               "Build libtiff from source"          (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+#OCV_OPTION(BUILD_TIFF               "Build libtiff from source"          (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
+OCV_OPTION(BUILD_TIFF               "Build libtiff from source"          OFF)
 OCV_OPTION(BUILD_OPENJPEG           "Build OpenJPEG from source"         (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
 OCV_OPTION(BUILD_JASPER             "Build libjasper from source"        (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
 OCV_OPTION(BUILD_JPEG               "Build libjpeg from source"          (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
 OCV_OPTION(BUILD_PNG                "Build libpng from source"           (WIN32 OR ANDROID OR APPLE OR OPENCV_FORCE_3RDPARTY_BUILD) )
-OCV_OPTION(BUILD_OPENEXR            "Build openexr from source"          (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
-OCV_OPTION(BUILD_WEBP               "Build WebP from source"             (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
+#OCV_OPTION(BUILD_OPENEXR            "Build openexr from source"          (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
+OCV_OPTION(BUILD_OPENEXR            "Build openexr from source"          OFF)
+#OCV_OPTION(BUILD_WEBP               "Build WebP from source"             (((WIN32 OR ANDROID OR APPLE) AND NOT WINRT) OR OPENCV_FORCE_3RDPARTY_BUILD) )
+OCV_OPTION(BUILD_WEBP               "Build WebP from source"             OFF)
 OCV_OPTION(BUILD_TBB                "Download and build TBB from source" (ANDROID OR OPENCV_FORCE_3RDPARTY_BUILD) )
 OCV_OPTION(BUILD_IPP_IW             "Build IPP IW from source"           (NOT MINGW OR OPENCV_FORCE_3RDPARTY_BUILD) IF (X86_64 OR X86) AND NOT WINRT )
 OCV_OPTION(BUILD_ITT                "Build Intel ITT from source"
@@ -228,13 +231,16 @@ OCV_OPTION(BUILD_ITT                "Build Intel ITT from source"
 
 # Optional 3rd party components
 # ===================================================
-OCV_OPTION(WITH_1394 "Include IEEE1394 support" ON
+#OCV_OPTION(WITH_1394 "Include IEEE1394 support" ON
+OCV_OPTION(WITH_1394 "Include IEEE1394 support" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS AND NOT WINRT
   VERIFY HAVE_DC1394_2)
-OCV_OPTION(WITH_AVFOUNDATION "Use AVFoundation for Video I/O (iOS/Mac)" ON
+#OCV_OPTION(WITH_AVFOUNDATION "Use AVFoundation for Video I/O (iOS/Mac)" ON
+OCV_OPTION(WITH_AVFOUNDATION "Use AVFoundation for Video I/O (iOS/Mac)" OFF
   VISIBLE_IF APPLE
   VERIFY HAVE_AVFOUNDATION)
-OCV_OPTION(WITH_CAP_IOS "Enable iOS video capture" ON
+#OCV_OPTION(WITH_CAP_IOS "Enable iOS video capture" ON
+OCV_OPTION(WITH_CAP_IOS "Enable iOS video capture" OFF
   VISIBLE_IF IOS
   VERIFY HAVE_CAP_IOS)
 OCV_OPTION(WITH_CAROTENE "Use NVidia carotene acceleration library for ARM platform" ON
@@ -242,7 +248,8 @@ OCV_OPTION(WITH_CAROTENE "Use NVidia carotene acceleration library for ARM platf
 OCV_OPTION(WITH_CPUFEATURES "Use cpufeatures Android library" ON
   VISIBLE_IF ANDROID
   VERIFY HAVE_CPUFEATURES)
-OCV_OPTION(WITH_VTK "Include VTK library support (and build opencv_viz module eiher)" ON
+#OCV_OPTION(WITH_VTK "Include VTK library support (and build opencv_viz module eiher)" ON
+OCV_OPTION(WITH_VTK "Include VTK library support (and build opencv_viz module eiher)" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS AND NOT WINRT AND NOT CMAKE_CROSSCOMPILING
   VERIFY HAVE_VTK)
 OCV_OPTION(WITH_CUDA "Include NVidia Cuda Runtime support" OFF
@@ -263,13 +270,16 @@ OCV_OPTION(WITH_NVCUVID "Include NVidia Video Decoding library support" OFF  # d
 OCV_OPTION(WITH_EIGEN "Include Eigen2/Eigen3 support" (NOT CV_DISABLE_OPTIMIZATION AND NOT CMAKE_CROSSCOMPILING)
   VISIBLE_IF NOT WINRT
   VERIFY HAVE_EIGEN)
-OCV_OPTION(WITH_FFMPEG "Include FFMPEG support" (NOT ANDROID)
+#OCV_OPTION(WITH_FFMPEG "Include FFMPEG support" (NOT ANDROID)
+OCV_OPTION(WITH_FFMPEG "Include FFMPEG support" OFF
   VISIBLE_IF NOT IOS AND NOT WINRT
   VERIFY HAVE_FFMPEG)
-OCV_OPTION(WITH_GSTREAMER "Include Gstreamer support" ON
+#OCV_OPTION(WITH_GSTREAMER "Include Gstreamer support" ON
+OCV_OPTION(WITH_GSTREAMER "Include Gstreamer support" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS AND NOT WINRT
   VERIFY HAVE_GSTREAMER AND GSTREAMER_VERSION VERSION_GREATER "0.99")
-OCV_OPTION(WITH_GTK "Include GTK support" ON
+#OCV_OPTION(WITH_GTK "Include GTK support" ON
+OCV_OPTION(WITH_GTK "Include GTK support" OFF
   VISIBLE_IF UNIX AND NOT APPLE AND NOT ANDROID
   VERIFY HAVE_GTK)
 OCV_OPTION(WITH_GTK_2_X "Use GTK version 2" OFF
@@ -299,7 +309,8 @@ OCV_OPTION(WITH_OPENJPEG "Include JPEG2K support (OpenJPEG)" ON
 OCV_OPTION(WITH_JPEG "Include JPEG support" ON
   VISIBLE_IF TRUE
   VERIFY HAVE_JPEG)
-OCV_OPTION(WITH_WEBP "Include WebP support" ON
+#OCV_OPTION(WITH_WEBP "Include WebP support" ON
+OCV_OPTION(WITH_WEBP "Include WebP support" OFF
   VISIBLE_IF NOT WINRT
   VERIFY HAVE_WEBP)
 OCV_OPTION(WITH_OPENEXR "Include ILM support via OpenEXR" BUILD_OPENEXR OR NOT CMAKE_CROSSCOMPILING
@@ -341,16 +352,18 @@ OCV_OPTION(WITH_TBB "Include Intel TBB support" OFF
 OCV_OPTION(WITH_HPX "Include Ste||ar Group HPX support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_HPX)
-OCV_OPTION(WITH_OPENMP "Include OpenMP support" OFF
+#OCV_OPTION(WITH_OPENMP "Include OpenMP support" OFF
+OCV_OPTION(WITH_OPENMP "Include OpenMP support" ON
   VISIBLE_IF TRUE
   VERIFY HAVE_OPENMP)
 OCV_OPTION(WITH_PTHREADS_PF "Use pthreads-based parallel_for" ON
   VISIBLE_IF NOT WIN32 OR MINGW
   VERIFY HAVE_PTHREADS_PF)
-OCV_OPTION(WITH_TIFF "Include TIFF support" ON
+#OCV_OPTION(WITH_TIFF "Include TIFF support" ON
+OCV_OPTION(WITH_TIFF "Include TIFF support" OFF
   VISIBLE_IF NOT IOS
   VERIFY HAVE_TIFF)
-OCV_OPTION(WITH_V4L "Include Video 4 Linux support" ON
+OCV_OPTION(WITH_V4L "Include Video 4 Linux support" OFF
   VISIBLE_IF UNIX AND NOT ANDROID AND NOT APPLE
   VERIFY HAVE_CAMV4L OR HAVE_CAMV4L2 OR HAVE_VIDEOIO)
 OCV_OPTION(WITH_DSHOW "Build VideoIO with DirectShow support" ON
@@ -374,19 +387,23 @@ OCV_OPTION(WITH_XINE "Include Xine support (GPL)" OFF
 OCV_OPTION(WITH_CLP "Include Clp support (EPL)" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_CLP)
-OCV_OPTION(WITH_OPENCL "Include OpenCL Runtime support" (NOT ANDROID AND NOT CV_DISABLE_OPTIMIZATION)
+#OCV_OPTION(WITH_OPENCL "Include OpenCL Runtime support" (NOT ANDROID AND NOT CV_DISABLE_OPTIMIZATION)
+OCV_OPTION(WITH_OPENCL "Include OpenCL Runtime support" OFF
   VISIBLE_IF NOT IOS AND NOT WINRT
   VERIFY HAVE_OPENCL)
 OCV_OPTION(WITH_OPENCL_SVM "Include OpenCL Shared Virtual Memory support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_OPENCL_SVM) # experimental
-OCV_OPTION(WITH_OPENCLAMDFFT "Include AMD OpenCL FFT library support" ON
+#OCV_OPTION(WITH_OPENCLAMDFFT "Include AMD OpenCL FFT library support" ON
+OCV_OPTION(WITH_OPENCLAMDFFT "Include AMD OpenCL FFT library support" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS AND NOT WINRT
   VERIFY HAVE_CLAMDFFT)
-OCV_OPTION(WITH_OPENCLAMDBLAS "Include AMD OpenCL BLAS library support" ON
+#OCV_OPTION(WITH_OPENCLAMDBLAS "Include AMD OpenCL BLAS library support" ON
+OCV_OPTION(WITH_OPENCLAMDBLAS "Include AMD OpenCL BLAS library support" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS AND NOT WINRT
   VERIFY HAVE_CLAMDBLAS)
-OCV_OPTION(WITH_DIRECTX "Include DirectX support" ON
+#OCV_OPTION(WITH_DIRECTX "Include DirectX support" ON
+OCV_OPTION(WITH_DIRECTX "Include DirectX support" OFF
   VISIBLE_IF WIN32 AND NOT WINRT
   VERIFY HAVE_DIRECTX)
 OCV_OPTION(WITH_OPENCL_D3D11_NV "Include NVIDIA OpenCL D3D11 support" WITH_DIRECTX
@@ -395,10 +412,12 @@ OCV_OPTION(WITH_OPENCL_D3D11_NV "Include NVIDIA OpenCL D3D11 support" WITH_DIREC
 OCV_OPTION(WITH_LIBREALSENSE "Include Intel librealsense support" OFF
   VISIBLE_IF NOT WITH_INTELPERC
   VERIFY HAVE_LIBREALSENSE)
-OCV_OPTION(WITH_VA "Include VA support" (X86_64 OR X86)
+#OCV_OPTION(WITH_VA "Include VA support" (X86_64 OR X86)
+OCV_OPTION(WITH_VA "Include VA support" OFF
   VISIBLE_IF UNIX AND NOT APPLE AND NOT ANDROID
   VERIFY HAVE_VA)
-OCV_OPTION(WITH_VA_INTEL "Include Intel VA-API/OpenCL support" (X86_64 OR X86)
+#OCV_OPTION(WITH_VA_INTEL "Include Intel VA-API/OpenCL support" (X86_64 OR X86)
+OCV_OPTION(WITH_VA_INTEL "Include Intel VA-API/OpenCL support" OFF
   VISIBLE_IF UNIX AND NOT APPLE AND NOT ANDROID
   VERIFY HAVE_VA_INTEL)
 OCV_OPTION(WITH_MFX "Include Intel Media SDK support" OFF
@@ -410,34 +429,44 @@ OCV_OPTION(WITH_GDAL "Include GDAL Support" OFF
 OCV_OPTION(WITH_GPHOTO2 "Include gPhoto2 library support" OFF
   VISIBLE_IF UNIX AND NOT ANDROID AND NOT IOS
   VERIFY HAVE_GPHOTO2)
-OCV_OPTION(WITH_LAPACK "Include Lapack library support" (NOT CV_DISABLE_OPTIMIZATION)
+#OCV_OPTION(WITH_LAPACK "Include Lapack library support" (NOT CV_DISABLE_OPTIMIZATION)
+OCV_OPTION(WITH_LAPACK "Include Lapack library support" OFF
   VISIBLE_IF NOT ANDROID AND NOT IOS
   VERIFY HAVE_LAPACK)
-OCV_OPTION(WITH_ITT "Include Intel ITT support" ON
+#OCV_OPTION(WITH_ITT "Include Intel ITT support" ON
+OCV_OPTION(WITH_ITT "Include Intel ITT support" OFF
   VISIBLE_IF NOT APPLE_FRAMEWORK
   VERIFY HAVE_ITT)
-OCV_OPTION(WITH_PROTOBUF "Enable libprotobuf" ON
+#OCV_OPTION(WITH_PROTOBUF "Enable libprotobuf" ON
+OCV_OPTION(WITH_PROTOBUF "Enable libprotobuf" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_PROTOBUF)
-OCV_OPTION(WITH_IMGCODEC_HDR "Include HDR support" ON
+#OCV_OPTION(WITH_IMGCODEC_HDR "Include HDR support" ON
+OCV_OPTION(WITH_IMGCODEC_HDR "Include HDR support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_IMGCODEC_HDR)
-OCV_OPTION(WITH_IMGCODEC_SUNRASTER "Include SUNRASTER support" ON
+#OCV_OPTION(WITH_IMGCODEC_SUNRASTER "Include SUNRASTER support" ON
+OCV_OPTION(WITH_IMGCODEC_SUNRASTER "Include SUNRASTER support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_IMGCODEC_SUNRASTER)
-OCV_OPTION(WITH_IMGCODEC_PXM "Include PNM (PBM,PGM,PPM) and PAM formats support" ON
+#OCV_OPTION(WITH_IMGCODEC_PXM "Include PNM (PBM,PGM,PPM) and PAM formats support" ON
+OCV_OPTION(WITH_IMGCODEC_PXM "Include PNM (PBM,PGM,PPM) and PAM formats support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_IMGCODEC_PXM)
-OCV_OPTION(WITH_IMGCODEC_PFM "Include PFM formats support" ON
+#OCV_OPTION(WITH_IMGCODEC_PFM "Include PFM formats support" ON
+OCV_OPTION(WITH_IMGCODEC_PFM "Include PFM formats support" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_IMGCODEC_PFM)
-OCV_OPTION(WITH_QUIRC "Include library QR-code decoding" ON
+#OCV_OPTION(WITH_QUIRC "Include library QR-code decoding" ON
+OCV_OPTION(WITH_QUIRC "Include library QR-code decoding" OFF
   VISIBLE_IF TRUE
   VERIFY HAVE_QUIRC)
-OCV_OPTION(WITH_ANDROID_MEDIANDK "Use Android Media NDK for Video I/O (Android)" (ANDROID_NATIVE_API_LEVEL GREATER 20)
+#OCV_OPTION(WITH_ANDROID_MEDIANDK "Use Android Media NDK for Video I/O (Android)" (ANDROID_NATIVE_API_LEVEL GREATER 20)
+OCV_OPTION(WITH_ANDROID_MEDIANDK "Use Android Media NDK for Video I/O (Android)" OFF
   VISIBLE_IF ANDROID
   VERIFY HAVE_ANDROID_MEDIANDK)
-OCV_OPTION(WITH_ANDROID_NATIVE_CAMERA "Use Android NDK for Camera I/O (Android)" (ANDROID_NATIVE_API_LEVEL GREATER 23)
+#OCV_OPTION(WITH_ANDROID_NATIVE_CAMERA "Use Android NDK for Camera I/O (Android)" (ANDROID_NATIVE_API_LEVEL GREATER 23)
+OCV_OPTION(WITH_ANDROID_NATIVE_CAMERA "Use Android NDK for Camera I/O (Android)" OFF
   VISIBLE_IF ANDROID
   VERIFY HAVE_ANDROID_NATIVE_CAMERA)
 OCV_OPTION(WITH_TENGINE "Include Arm Inference Tengine support" OFF
@@ -465,9 +494,12 @@ OCV_OPTION(BUILD_WITH_DYNAMIC_IPP   "Enables dynamic linking of IPP (only for st
 OCV_OPTION(BUILD_FAT_JAVA_LIB       "Create Java wrapper exporting all functions of OpenCV library (requires static build of OpenCV modules)" ANDROID IF NOT BUILD_SHARED_LIBS)
 OCV_OPTION(BUILD_ANDROID_SERVICE    "Build OpenCV Manager for Google Play" OFF IF ANDROID )
 OCV_OPTION(BUILD_CUDA_STUBS         "Build CUDA modules stubs when no CUDA SDK" OFF  IF (NOT APPLE_FRAMEWORK) )
-OCV_OPTION(BUILD_JAVA               "Enable Java support"                         (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
-OCV_OPTION(BUILD_OBJC               "Enable Objective-C support"                  ON  IF APPLE_FRAMEWORK )
-OCV_OPTION(BUILD_KOTLIN_EXTENSIONS  "Build Kotlin extensions (Android)"           ON  IF ANDROID )
+#OCV_OPTION(BUILD_JAVA               "Enable Java support"                         (ANDROID OR NOT CMAKE_CROSSCOMPILING)  IF (ANDROID OR (NOT APPLE_FRAMEWORK AND NOT WINRT)) )
+OCV_OPTION(BUILD_JAVA               "Enable Java support"                         OFF)
+#OCV_OPTION(BUILD_OBJC               "Enable Objective-C support"                  ON  IF APPLE_FRAMEWORK )
+OCV_OPTION(BUILD_OBJC               "Enable Objective-C support"                  OFF)
+#OCV_OPTION(BUILD_KOTLIN_EXTENSIONS  "Build Kotlin extensions (Android)"           ON  IF ANDROID )
+OCV_OPTION(BUILD_KOTLIN_EXTENSIONS  "Build Kotlin extensions (Android)"           OFF)
 
 # OpenCV installation options
 # ===================================================
@@ -507,11 +539,13 @@ OCV_OPTION(GENERATE_ABI_DESCRIPTOR    "Generate XML file for abi_compliance_chec
 OCV_OPTION(OPENCV_GENERATE_PKGCONFIG  "Generate .pc file for pkg-config build tool (deprecated)" OFF)
 OCV_OPTION(CV_ENABLE_INTRINSICS       "Use intrinsic-based optimized code" ON )
 OCV_OPTION(CV_DISABLE_OPTIMIZATION    "Disable explicit optimized code (dispatched code/intrinsics/loop unrolling/etc)" OFF )
-OCV_OPTION(CV_TRACE                   "Enable OpenCV code trace" ON)
+#OCV_OPTION(CV_TRACE                   "Enable OpenCV code trace" ON)
+OCV_OPTION(CV_TRACE                   "Enable OpenCV code trace" OFF)
 OCV_OPTION(OPENCV_GENERATE_SETUPVARS  "Generate setup_vars* scripts" ON IF (NOT ANDROID AND NOT APPLE_FRAMEWORK) )
 OCV_OPTION(ENABLE_CONFIG_VERIFICATION "Fail build if actual configuration doesn't match requested (WITH_XXX != HAVE_XXX)" OFF)
 OCV_OPTION(OPENCV_ENABLE_MEMALIGN     "Enable posix_memalign or memalign usage" ON)
-OCV_OPTION(OPENCV_DISABLE_FILESYSTEM_SUPPORT "Disable filesystem support" OFF)
+#OCV_OPTION(OPENCV_DISABLE_FILESYSTEM_SUPPORT "Disable filesystem support" OFF)
+OCV_OPTION(OPENCV_DISABLE_FILESYSTEM_SUPPORT "Disable filesystem support" ON)
 
 OCV_OPTION(ENABLE_PYLINT              "Add target with Pylint checks"                            (BUILD_DOCS OR BUILD_EXAMPLES) IF (NOT CMAKE_CROSSCOMPILING AND NOT APPLE_FRAMEWORK) )
 OCV_OPTION(ENABLE_FLAKE8              "Add target with Python flake8 checker"                    (BUILD_DOCS OR BUILD_EXAMPLES) IF (NOT CMAKE_CROSSCOMPILING AND NOT APPLE_FRAMEWORK) )
@@ -575,10 +609,26 @@ if(DEFINED CMAKE_DEBUG_POSTFIX)
   set(OPENCV_DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 endif()
 
-if((INSTALL_CREATE_DISTRIB AND BUILD_SHARED_LIBS AND NOT DEFINED BUILD_opencv_world) OR APPLE_FRAMEWORK)
+#if((INSTALL_CREATE_DISTRIB AND BUILD_SHARED_LIBS AND NOT DEFINED BUILD_opencv_world) OR APPLE_FRAMEWORK)
+if((INSTALL_CREATE_DISTRIB AND BUILD_SHARED_LIBS AND NOT DEFINED BUILD_opencv_world))
   set(BUILD_opencv_world ON CACHE INTERNAL "")
 endif()
-
+set(BUILD_opencv_dnn OFF CACHE INTERNAL "")
+set(BUILD_opencv_gapi OFF CACHE INTERNAL "")
+set(BUILD_opencv_highgui OFF CACHE INTERNAL "")
+set(BUILD_opencv_java OFF CACHE INTERNAL "")
+set(BUILD_opencv_java_bindings_generator  OFF CACHE INTERNAL "")
+set(BUILD_opencv_js_bindings_generator  OFF CACHE INTERNAL "")
+set(BUILD_opencv_ml OFF CACHE INTERNAL "")
+set(BUILD_opencv_objc OFF CACHE INTERNAL "")
+set(BUILD_opencv_objc_bindings_generator OFF CACHE INTERNAL "")
+set(BUILD_opencv_objdetect OFF CACHE INTERNAL "")
+set(BUILD_opencv_photo OFF CACHE INTERNAL "")
+set(BUILD_opencv_stitching OFF CACHE INTERNAL "")
+set(BUILD_opencv_ts OFF CACHE INTERNAL "")
+set(BUILD_opencv_video OFF CACHE INTERNAL "")
+set(BUILD_opencv_videoio OFF CACHE INTERNAL "")
+set(BUILD_opencv_world OFF CACHE INTERNAL "")
 include(cmake/OpenCVInstallLayout.cmake)
 
 # ----------------------------------------------------------------------------

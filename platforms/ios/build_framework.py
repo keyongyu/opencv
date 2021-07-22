@@ -54,7 +54,7 @@ class Builder:
         self.dynamic = dynamic
         self.bitcodedisabled = bitcodedisabled
         self.exclude = exclude
-        self.build_objc_wrapper = not "objc" in self.exclude
+        self.build_objc_wrapper = False #not "objc" in self.exclude
         self.disable = disable
         self.enablenonfree = enablenonfree
         self.targets = targets
@@ -540,7 +540,8 @@ if __name__ == "__main__":
         iphoneos_archs = args.iphoneos_archs.split(',')
     elif not args.build_only_specified_archs:
         # Supply defaults
-        iphoneos_archs = ["armv7", "armv7s", "arm64"]
+        #iphoneos_archs = ["armv7", "armv7s", "arm64"]
+        iphoneos_archs = ["arm64"]
     print('Using iPhoneOS ARCHS=' + str(iphoneos_archs))
 
     iphonesimulator_archs = None
@@ -548,7 +549,8 @@ if __name__ == "__main__":
         iphonesimulator_archs = args.iphonesimulator_archs.split(',')
     elif not args.build_only_specified_archs:
         # Supply defaults
-        iphonesimulator_archs = ["i386", "x86_64"]
+        #iphonesimulator_archs = ["i386", "x86_64"]
+        iphonesimulator_archs = ["x86_64"]
     print('Using iPhoneSimulator ARCHS=' + str(iphonesimulator_archs))
 
     # Prevent the build from happening if the same architecture is specified for multiple platforms.

@@ -122,6 +122,8 @@ void pm_g1(InputArray _Lx, InputArray _Ly, OutputArray _dst, float k) {
  * @param dst Output image
  * @param k Contrast factor parameter
  */
+#if !defined(CV_NEON) || (!CV_NEON)
+//#error "not neon"
 void pm_g2(InputArray _Lx, InputArray _Ly, OutputArray _dst, float k) {
     CV_INSTRUMENT_REGION();
 
@@ -143,6 +145,62 @@ void pm_g2(InputArray _Lx, InputArray _Ly, OutputArray _dst, float k) {
         }
     }
 }
+#else
+//#include <android/log.h>
+static inline float32x4_t div_ps(float32x4_t a, float32x4_t b)
+{
+#if defined(__aarch64__) && __aarch64__
+    return vdivq_f32(a, b);
+#else
+    float32x4_t reciprocal = vrecpeq_f32(b);
+    reciprocal = vmulq_f32(vrecpsq_f32(b, reciprocal), reciprocal);
+    //reciprocal = vmulq_f32(vrecpsq_f32(b, reciprocal), reciprocal);
+    return vmulq_f32(a, reciprocal);
+#endif
+}
+void pm_g2(InputArray _Lx, InputArray _Ly, OutputArray _dst, float k) {
+    //int64 b1 = getTickCount();
+    //__android_log_print(ANDROID_LOG_ERROR,"libdmi2","neon pm_g2");
+    CV_INSTRUMENT_REGION();
+    _dst.create(_Lx.size(), _Lx.type());
+    Mat mx = _Lx.getMat();
+    Mat my = _Ly.getMat();
+    Mat dst = _dst.getMat();
+
+    Size sz = mx.size();
+    dst.create(sz, mx.type());
+    float k2inv = 1.0f / (k * k);
+
+    float32x4_t vk2inv= vdupq_n_f32(k2inv);
+    float32x4_t v_1f= vdupq_n_f32(1.0f);
+
+    for(int y = 0; y < sz.height; ++y){
+        const float * Lx = mx.ptr<float>(y);
+        const float * Ly = my.ptr<float>(y);
+        float* d = dst.ptr<float>(y);
+        int sz_width_4 = sz.width&(~0x03);
+        for (int x = 0; x < sz_width_4; x+=4,Lx+=4,Ly+=4,d+=4)
+        {
+            //g2 = 1 / (1 + (x^2 +y^2)/ k^2)
+            float32x4_t vx  = vld1q_f32(Lx), vy = vld1q_f32(Ly);
+            float32x4_t vx2 = vmulq_f32(vx,vx);
+            float32x4_t vtmp  = vmlaq_f32(v_1f,  vmlaq_f32(vx2, vy, vy), vk2inv);
+            vst1q_f32(d, div_ps(v_1f, vtmp));
+        }
+        Lx = mx.ptr<float>(y);
+        Ly = my.ptr<float>(y);
+        d = dst.ptr<float>(y);
+        for(int x = sz_width_4; x < sz.width; ++ x) {
+            d[x] = 1.0f / (1.0f + ((Lx[x] * Lx[x] + Ly[x] * Ly[x]) * k2inv));
+        }
+    }
+    //int64 b2 = getTickCount();
+    // __android_log_print(ANDROID_LOG_ERROR,"libdmi2","neon pm_g2:  %f sec, ,size=(%d,%d)",
+    //                (b2-b1)/getTickFrequency(),
+    //                sz.height,sz.width
+    //                );
+}
+#endif
 /* ************************************************************************* */
 /**
  * @brief This function computes Weickert conductivity coefficient gw

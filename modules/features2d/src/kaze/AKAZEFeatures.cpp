@@ -167,6 +167,9 @@ nld_step_scalar_one_lane(const Mat& Lt, const Mat& Lf, Mat& Lstep, float step_si
     ++row;
   }
 
+#if defined(CV_NEON) && CV_NEON
+   float32x4_t v_step_size= vdupq_n_f32(step_size);
+#endif
   // Process the middle rows
   int middle_end = std::min(Lt.rows - 1, row_end);
   for (; row < middle_end; ++row)
@@ -188,7 +191,8 @@ nld_step_scalar_one_lane(const Mat& Lt, const Mat& Lf, Mat& Lstep, float step_si
     lt_a++; lt_c++; lt_b++;
     lf_a++; lf_c++; lf_b++;
     dst++;
-
+#if !defined(CV_NEON) || (!CV_NEON)
+//#error "not neon"
     // The middle columns
     for (int j = 0; j < cols; j++)
     {
@@ -198,6 +202,59 @@ nld_step_scalar_one_lane(const Mat& Lt, const Mat& Lf, Mat& Lstep, float step_si
                (lf_c[j] + lf_a[j    ])*(lt_a[j    ] - lt_c[j]);
       dst[j] = step_r * step_size;
     }
+#else
+    int j = 0, cols_4= cols & (~0x03);
+    auto dst1 = dst;
+    for (; j < cols_4; j+=4, dst1+=4)
+    {
+      //step_r = (lf_c[j] + lf_c[j + 1])*(lt_c[j + 1] - lt_c[j]) +
+      //         (lf_c[j] + lf_c[j - 1])*(lt_c[j - 1] - lt_c[j]) +
+      //         (lf_c[j] + lf_b[j    ])*(lt_b[j    ] - lt_c[j]) +
+      //         (lf_c[j] + lf_a[j    ])*(lt_a[j    ] - lt_c[j]);
+      //dst[j] = step_r * step_size;
+
+      float32x4_t f_c_j_m1 = vld1q_f32(lf_c + j - 1);
+      float32x4_t f_c_j    = vld1q_f32(lf_c + j);
+      float32x4_t f_c_j_p1 = vld1q_f32(lf_c + j + 1);
+
+      float32x4_t t_c_j_m1 = vld1q_f32(lt_c + j - 1);
+      float32x4_t t_c_j    = vld1q_f32(lt_c + j);
+      float32x4_t t_c_j_p1 = vld1q_f32(lt_c + j + 1);
+
+      float32x4_t f_a_j    = vld1q_f32(lf_a + j);
+      float32x4_t t_a_j    = vld1q_f32(lt_a + j);
+      float32x4_t f_b_j    = vld1q_f32(lf_b + j);
+      float32x4_t t_b_j    = vld1q_f32(lt_b + j);
+
+      float32x4_t temp  = vaddq_f32(f_c_j,    f_c_j_p1);
+      float32x4_t temp2 = vsubq_f32(t_c_j_p1, t_c_j);
+      float32x4_t s1    = vmulq_f32(temp, temp2);
+
+      temp              = vaddq_f32(f_c_j,    f_c_j_m1);
+      temp2             = vsubq_f32(t_c_j_m1, t_c_j);
+      s1                = vmlaq_f32(s1, temp, temp2); // s1 = s1 + temp*temp2
+
+      temp              = vaddq_f32(f_c_j, f_b_j);
+      temp2             = vsubq_f32(t_b_j, t_c_j);
+      s1                = vmlaq_f32(s1, temp, temp2); // s1 = s1 + temp*temp2
+
+      temp              = vaddq_f32(f_c_j, f_a_j);
+      temp2             = vsubq_f32(t_a_j, t_c_j);
+      s1                = vmlaq_f32(s1, temp, temp2); // s1 = s1 + temp*temp2
+
+      vst1q_f32(dst1, vmulq_f32(s1, v_step_size));
+    }
+    j = cols_4 ;
+    for (; j < cols; j++)
+    {
+      step_r = (lf_c[j] + lf_c[j + 1])*(lt_c[j + 1] - lt_c[j]) +
+               (lf_c[j] + lf_c[j - 1])*(lt_c[j - 1] - lt_c[j]) +
+               (lf_c[j] + lf_b[j    ])*(lt_b[j    ] - lt_c[j]) +
+               (lf_c[j] + lf_a[j    ])*(lt_a[j    ] - lt_c[j]);
+      dst[j] = step_r * step_size;
+    }
+
+#endif
 
     // The right-most column
     step_r = (lf_c[cols] + lf_c[cols - 1])*(lt_c[cols - 1] - lt_c[cols]) +
@@ -287,7 +344,16 @@ non_linear_diffusion_step(InputArray Lt_, InputArray Lf_, OutputArray Lstep_, fl
   Mat Lt = Lt_.getMat();
   Mat Lf = Lf_.getMat();
   Mat Lstep = Lstep_.getMat();
+//#ifdef HAVE_OPENMP
+#if 0
+  std::shared_ptr<ParallelForAPI> old = getCurrentParallelForAPI();
+  std::shared_ptr<cv::parallel::ParallelForAPI> newbackend = createParallelBackendOpenMP();
+  setParallelForBackend(newbackend);
   parallel_for_(Range(0, Lt.rows), NonLinearScalarDiffusionStep(Lt, Lf, Lstep, step_size));
+  setParallelForBackend(old);
+#else
+  parallel_for_(Range(0, Lt.rows), NonLinearScalarDiffusionStep(Lt, Lf, Lstep, step_size));
+#endif
 }
 
 /**
@@ -422,7 +488,7 @@ static inline void prepareInputImage(InputArray image, OutputArray dst)
   else if ( img.depth() == CV_16U )
     img.convertTo(dst, CV_32F, 1.0 / 65535.0, 0);
 }
-
+//#include <android/log.h>
 /**
  * @brief This method creates the nonlinear scale space for a given image
  * @param image Input image for which the nonlinear scale space needs to be created
@@ -434,7 +500,7 @@ create_nonlinear_scale_space(InputArray image, const AKAZEOptions &options,
 {
   CV_INSTRUMENT_REGION();
   CV_Assert(evolution.size() > 0);
-
+  //int64 b1 = getTickCount();
   // convert input to grayscale float image if needed
   MatType img;
   prepareInputImage(image, img);
@@ -449,18 +515,21 @@ create_nonlinear_scale_space(InputArray image, const AKAZEOptions &options,
     Compute_Determinant_Hessian_Response(evolution);
     return;
   }
+  //int64 b2 = getTickCount();
 
   // derivatives, flow and diffusion step
   MatType Lx, Ly, Lsmooth, Lflow, Lstep;
 
   // compute derivatives for computing k contrast
   GaussianBlur(img, Lsmooth, Size(5, 5), 1.0f, 1.0f, BORDER_REPLICATE);
+  //int64 b3 = getTickCount();
   Scharr(Lsmooth, Lx, CV_32F, 1, 0, 1, 0, BORDER_DEFAULT);
   Scharr(Lsmooth, Ly, CV_32F, 0, 1, 1, 0, BORDER_DEFAULT);
   Lsmooth.release();
+  //int64 b4 = getTickCount();
   // compute the kcontrast factor
   float kcontrast = compute_kcontrast(Lx, Ly, options.kcontrast_percentile, options.kcontrast_nbins);
-
+  //int64 b5 = getTickCount();
   // Now generate the rest of evolution levels
   for (size_t i = 1; i < evolution.size(); i++) {
     Evolution<MatType> &e = evolution[i];
@@ -492,8 +561,21 @@ create_nonlinear_scale_space(InputArray image, const AKAZEOptions &options,
     }
   }
 
+  //int64 b6 = getTickCount();
   Compute_Determinant_Hessian_Response(evolution);
 
+//  int64 b7 = getTickCount();
+//#ifdef  __ANDROID__
+//            __android_log_print(ANDROID_LOG_ERROR,"libdmi2","detectAndCompute:  %f,%f,%f,%f,%f,%f total=%f",
+//                    (b2-b1)/getTickFrequency(),
+//                    (b3-b2)/getTickFrequency(),
+//                    (b4-b3)/getTickFrequency(),
+//                    (b5-b4)/getTickFrequency(),
+//                    (b6-b5)/getTickFrequency(),
+//                    (b7-b6)/getTickFrequency(),
+//                    (b7-b1)/getTickFrequency()
+//                    );
+//#endif
   return;
 }
 
@@ -588,9 +670,27 @@ static inline void compute_determinant(InputArray Lxx_, InputArray Lxy_, InputAr
   float *lyy = Lyy.ptr<float>();
   float *ldet = Ldet.ptr<float>();
   const int total = Lxx.cols * Lxx.rows;
-  for (int j = 0; j < total; j++) {
+#if !defined(CV_NEON) || (!CV_NEON)
+//#error "not neon"
+  for (int j = 0; j < total; ++j) {
     ldet[j] = (lxx[j] * lyy[j] - lxy[j] * lxy[j]) * sigma;
   }
+#else
+  float32x4_t v_sigma = vdupq_n_f32(sigma);
+  int total_4 = total & (~0x03);
+  float*  d=ldet;
+  for (int j = 0; j < total_4; j+=4, d+=4) {
+    float32x4_t lxxj = vld1q_f32(lxx+j);
+    float32x4_t lyyj = vld1q_f32(lyy+j);
+    float32x4_t lxyj = vld1q_f32(lxy+j);
+    float32x4_t temp = vmulq_f32(lxxj, lyyj);
+    temp = vmlsq_f32(temp, lxyj, lxyj); //temp - lxyj*lxyj
+    vst1q_f32(d, vmulq_f32(temp, v_sigma));
+  }
+  for (int j = total_4; j < total; ++j) {
+    ldet[j] = (lxx[j] * lyy[j] - lxy[j] * lxy[j]) * sigma;
+  }
+#endif
 
 }
 

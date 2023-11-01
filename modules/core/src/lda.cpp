@@ -1092,11 +1092,11 @@ void LDA::lda(InputArrayOfArrays _src, InputArray _lbls) {
         CV_Error(Error::StsBadArg, error_message);
     }
     // warn if within-classes scatter matrix becomes singular
-    if (N < D) {
-        std::cout << "Warning: Less observations than feature dimension given!"
-                  << "Computation will probably fail."
-                  << std::endl;
-    }
+//    if (N < D) {
+//        std::cout << "Warning: Less observations than feature dimension given!"
+//                  << "Computation will probably fail."
+//                  << std::endl;
+//    }
     // clip number of components to be a valid number
     if ((_num_components <= 0) || (_num_components >= C)) {
         _num_components = (C - 1);

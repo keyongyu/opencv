@@ -796,6 +796,7 @@ For the described keys:
     Parameter 'fps': can not convert: [aaa] to [double]
 @endcode
  */
+#if 0
 class CV_EXPORTS CommandLineParser
 {
 public:
@@ -942,7 +943,7 @@ protected:
     struct Impl;
     Impl* impl;
 };
-
+#endif
 //! @} core_utils
 
 //! @cond IGNORED

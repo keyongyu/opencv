@@ -83,7 +83,7 @@ public:
     LMSolverImpl(const Ptr<LMSolver::Callback>& _cb, int _maxIters, double _eps = FLT_EPSILON)
         : cb(_cb), epsx(_eps), epsf(_eps), maxIters(_maxIters)
     {
-        printInterval = 0;
+//        printInterval = 0;
     }
 
     int run(InputOutputArray _param0) const CV_OVERRIDE
@@ -114,12 +114,12 @@ public:
         double lambda = 1, lc = 0.75;
         int i, iter = 0;
 
-        if( printInterval != 0 )
-        {
-            printf("************************************************************************************\n");
-            printf("\titr\tnfJ\t\tSUM(r^2)\t\tx\t\tdx\t\tl\t\tlc\n");
-            printf("************************************************************************************\n");
-        }
+//        if( printInterval != 0 )
+//        {
+//            printf("************************************************************************************\n");
+//            printf("\titr\tnfJ\t\tSUM(r^2)\t\tx\t\tdx\t\tl\t\tlc\n");
+//            printf("************************************************************************************\n");
+//        }
 
         for( ;; )
         {
@@ -175,11 +175,11 @@ public:
             iter++;
             bool proceed = iter < maxIters && norm(d, NORM_INF) >= epsx && norm(r, NORM_INF) >= epsf;
 
-            if( printInterval != 0 && (iter % printInterval == 0 || iter == 1 || !proceed) )
-            {
-                printf("%c%10d %10d %15.4e %16.4e %17.4e %16.4e %17.4e\n",
-                       (proceed ? ' ' : '*'), iter, nfJ, S, x.at<double>(0), d.at<double>(0), lambda, lc);
-            }
+//            if( printInterval != 0 && (iter % printInterval == 0 || iter == 1 || !proceed) )
+//            {
+//                printf("%c%10d %10d %15.4e %16.4e %17.4e %16.4e %17.4e\n",
+//                       (proceed ? ' ' : '*'), iter, nfJ, S, x.at<double>(0), d.at<double>(0), lambda, lc);
+//            }
 
             if(!proceed)
                 break;
@@ -203,7 +203,7 @@ public:
     double epsx;
     double epsf;
     int maxIters;
-    int printInterval;
+//    int printInterval;
 };
 
 

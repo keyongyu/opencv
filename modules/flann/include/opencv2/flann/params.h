@@ -106,7 +106,7 @@ inline void print_params(const IndexParams& params, std::ostream& stream)
 
 inline void print_params(const IndexParams& params)
 {
-    print_params(params, std::cout);
+    //print_params(params, std::cout);
 }
 
 }

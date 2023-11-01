@@ -2327,7 +2327,7 @@ public:
         ippStatus = ippGetCpuFeatures(&cpuFeatures, NULL);
         if(ippStatus < 0)
         {
-            std::cerr << "ERROR: IPP cannot detect CPU features, IPP was disabled " << std::endl;
+//            std::cerr << "ERROR: IPP cannot detect CPU features, IPP was disabled " << std::endl;
             useIPP = false;
             return;
         }
@@ -2365,7 +2365,7 @@ public:
 
             if(env == "disabled")
             {
-                std::cerr << "WARNING: IPP was disabled by OPENCV_IPP environment variable" << std::endl;
+//                std::cerr << "WARNING: IPP was disabled by OPENCV_IPP environment variable" << std::endl;
                 useIPP = false;
             }
             else if(env == "sse42")
@@ -2378,8 +2378,8 @@ public:
                 ippFeatures = minorFeatures|ippCPUID_SSE2|ippCPUID_SSE3|ippCPUID_SSSE3|ippCPUID_SSE41|ippCPUID_SSE42|ippCPUID_AVX|ippCPUID_AVX2|ippCPUID_AVX512F;
 #endif
 #endif
-            else
-                std::cerr << "ERROR: Improper value of OPENCV_IPP: " << env.c_str() << ". Correct values are: disabled, sse42, avx2, avx512 (Intel64 only)" << std::endl;
+//            else
+//                std::cerr << "ERROR: Improper value of OPENCV_IPP: " << env.c_str() << ". Correct values are: disabled, sse42, avx2, avx512 (Intel64 only)" << std::endl;
 
             // Trim unsupported features
             ippFeatures &= cpuFeatures;

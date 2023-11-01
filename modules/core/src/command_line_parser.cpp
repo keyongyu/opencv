@@ -3,7 +3,7 @@
 // of this distribution and at http://opencv.org/license.html.
 #include "precomp.hpp"
 #include <sstream>
-
+#if 0
 namespace cv
 {
 
@@ -555,3 +555,4 @@ std::vector<String> CommandLineParser::Impl::split_string(const String& _str, ch
 }
 
 }
+#endif

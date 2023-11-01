@@ -211,10 +211,10 @@ void writeLogMessage(LogLevel logLevel, const char* message)
     }
     __android_log_print(android_logLevel, "OpenCV/" CV_VERSION, "%s", ss.str().c_str());
 #endif
-    std::ostream* out = (logLevel <= LOG_LEVEL_WARNING) ? &std::cerr : &std::cout;
-    (*out) << ss.str();
-    if (logLevel <= LOG_LEVEL_WARNING)
-        (*out) << std::flush;
+    //std::ostream* out = (logLevel <= LOG_LEVEL_WARNING) ? &std::cerr : &std::cout;
+    //(*out) << ss.str();
+    //if (logLevel <= LOG_LEVEL_WARNING)
+    //    (*out) << std::flush;
 }
 
 void writeLogMessageEx(LogLevel logLevel, const char* tag, const char* file, int line, const char* func, const char* message)

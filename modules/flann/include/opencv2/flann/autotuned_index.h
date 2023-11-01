@@ -103,23 +103,23 @@ public:
      */
     virtual void buildIndex() CV_OVERRIDE
     {
-        std::ostringstream stream;
+//        std::ostringstream stream;
         bestParams_ = estimateBuildParams();
-        print_params(bestParams_, stream);
-        Logger::info("----------------------------------------------------\n");
-        Logger::info("Autotuned parameters:\n");
-        Logger::info("%s", stream.str().c_str());
-        Logger::info("----------------------------------------------------\n");
+//        print_params(bestParams_, stream);
+//        Logger::info("----------------------------------------------------\n");
+//        Logger::info("Autotuned parameters:\n");
+//        Logger::info("%s", stream.str().c_str());
+//        Logger::info("----------------------------------------------------\n");
 
         bestIndex_ = create_index_by_type(dataset_, bestParams_, distance_);
         bestIndex_->buildIndex();
         speedup_ = estimateSearchParams(bestSearchParams_);
-        stream.str(std::string());
-        print_params(bestSearchParams_, stream);
-        Logger::info("----------------------------------------------------\n");
-        Logger::info("Search parameters:\n");
-        Logger::info("%s", stream.str().c_str());
-        Logger::info("----------------------------------------------------\n");
+//        stream.str(std::string());
+//        print_params(bestSearchParams_, stream);
+//        Logger::info("----------------------------------------------------\n");
+//        Logger::info("Search parameters:\n");
+//        Logger::info("%s", stream.str().c_str());
+//        Logger::info("----------------------------------------------------\n");
     }
 
     /**
@@ -229,9 +229,9 @@ private:
         int checks;
         const int nn = 1;
 
-        Logger::info("KMeansTree using params: max_iterations=%d, branching=%d\n",
-                     get_param<int>(cost.params,"iterations"),
-                     get_param<int>(cost.params,"branching"));
+//        Logger::info("KMeansTree using params: max_iterations=%d, branching=%d\n",
+//                     get_param<int>(cost.params,"iterations"),
+//                     get_param<int>(cost.params,"branching"));
         KMeansIndex<Distance> kmeans(sampledDataset_, cost.params, distance_);
         // measure index build time
         t.start();
@@ -246,7 +246,7 @@ private:
         cost.memoryCost = (kmeans.usedMemory() + datasetMemory) / datasetMemory;
         cost.searchTimeCost = searchTime;
         cost.buildTimeCost = buildTime;
-        Logger::info("KMeansTree buildTime=%g, searchTime=%g, build_weight=%g\n", buildTime, searchTime, build_weight_);
+//        Logger::info("KMeansTree buildTime=%g, searchTime=%g, build_weight=%g\n", buildTime, searchTime, build_weight_);
     }
 
 
@@ -256,7 +256,7 @@ private:
         int checks;
         const int nn = 1;
 
-        Logger::info("KDTree using params: trees=%d\n", get_param<int>(cost.params,"trees"));
+//        Logger::info("KDTree using params: trees=%d\n", get_param<int>(cost.params,"trees"));
         KDTreeIndex<Distance> kdtree(sampledDataset_, cost.params, distance_);
 
         t.start();
@@ -271,7 +271,7 @@ private:
         cost.memoryCost = (kdtree.usedMemory() + datasetMemory) / datasetMemory;
         cost.searchTimeCost = searchTime;
         cost.buildTimeCost = buildTime;
-        Logger::info("KDTree buildTime=%g, searchTime=%g\n", buildTime, searchTime);
+//        Logger::info("KDTree buildTime=%g, searchTime=%g\n", buildTime, searchTime);
     }
 
 
@@ -325,7 +325,7 @@ private:
 
     void optimizeKMeans(std::vector<CostData>& costs)
     {
-        Logger::info("KMEANS, Step 1: Exploring parameter space\n");
+//        Logger::info("KMEANS, Step 1: Exploring parameter space\n");
 
         // explore kmeans parameters space using combinations of the parameters below
         int maxIterations[] = { 1, 5, 10, 15 };
@@ -373,7 +373,7 @@ private:
 
     void optimizeKDTree(std::vector<CostData>& costs)
     {
-        Logger::info("KD-TREE, Step 1: Exploring parameter space\n");
+//        Logger::info("KD-TREE, Step 1: Exploring parameter space\n");
 
         // explore kd-tree parameters space using the parameters below
         int testTrees[] = { 1, 4, 8, 16, 32 };
@@ -420,12 +420,12 @@ private:
         int sampleSize = int(sample_fraction_ * dataset_.rows);
         int testSampleSize = std::min(sampleSize / 10, 1000);
 
-        Logger::info("Entering autotuning, dataset size: %d, sampleSize: %d, testSampleSize: %d, target precision: %g\n", dataset_.rows, sampleSize, testSampleSize, target_precision_);
+//        Logger::info("Entering autotuning, dataset size: %d, sampleSize: %d, testSampleSize: %d, target precision: %g\n", dataset_.rows, sampleSize, testSampleSize, target_precision_);
 
         // For a very small dataset, it makes no sense to build any fancy index, just
         // use linear search
         if (testSampleSize < 10) {
-            Logger::info("Choosing linear, dataset too small\n");
+//            Logger::info("Choosing linear, dataset too small\n");
             return LinearIndexParams();
         }
 
@@ -435,7 +435,7 @@ private:
         testDataset_ = random_sample(sampledDataset_, testSampleSize, true);
 
         // We compute the ground truth using linear search
-        Logger::info("Computing ground truth... \n");
+//        Logger::info("Computing ground truth... \n");
         gt_matches_ = Matrix<int>(new int[testDataset_.rows], testDataset_.rows, 1);
         StartStopTimer t;
         t.start();
@@ -451,7 +451,7 @@ private:
         costs.push_back(linear_cost);
 
         // Start parameter autotune process
-        Logger::info("Autotuning parameters...\n");
+//        Logger::info("Autotuning parameters...\n");
 
         optimizeKMeans(costs);
         optimizeKDTree(costs);
@@ -504,7 +504,7 @@ private:
         if (samples > 0) {
             Matrix<ElementType> testDataset = random_sample(dataset_, samples);
 
-            Logger::info("Computing ground truth\n");
+//            Logger::info("Computing ground truth\n");
 
             // we need to compute the ground truth first
             Matrix<int> gt_matches(new int[testDataset.rows], testDataset.rows, 1);
@@ -515,12 +515,12 @@ private:
             float linear = (float)t.value;
 
             int checks;
-            Logger::info("Estimating number of checks\n");
+//            Logger::info("Estimating number of checks\n");
 
             float searchTime;
             float cb_index;
             if (bestIndex_->getType() == FLANN_INDEX_KMEANS) {
-                Logger::info("KMeans algorithm, estimating cluster border factor\n");
+//                Logger::info("KMeans algorithm, estimating cluster border factor\n");
                 KMeansIndex<Distance>* kmeans = (KMeansIndex<Distance>*)bestIndex_;
                 float bestSearchTime = -1;
                 float best_cb_index = -1;
@@ -539,14 +539,14 @@ private:
                 checks = best_checks;
 
                 kmeans->set_cb_index(best_cb_index);
-                Logger::info("Optimum cb_index: %g\n", cb_index);
+//                Logger::info("Optimum cb_index: %g\n", cb_index);
                 bestParams_["cb_index"] = cb_index;
             }
             else {
                 searchTime = test_index_precision(*bestIndex_, dataset_, testDataset, gt_matches, target_precision_, checks, distance_, nn, 1);
             }
 
-            Logger::info("Required number of checks: %d \n", checks);
+//            Logger::info("Required number of checks: %d \n", checks);
             searchParams["checks"] = checks;
 
             speedup = linear / searchTime;

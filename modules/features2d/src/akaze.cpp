@@ -52,7 +52,9 @@ http://www.robesafe.com/personal/pablo.alcantarilla/papers/Alcantarilla13bmvc.pd
 #include "kaze/AKAZEFeatures.h"
 
 #include <iostream>
-
+#ifdef __ANDROID__
+#include <android/log.h>
+#endif
 namespace cv
 {
     using namespace std;
@@ -185,15 +187,17 @@ namespace cv
             options.omax = octaves;
             options.nsublevels = sublevels;
             options.diffusivity = diffusivity;
-
+//            int64 b1 = getTickCount();
             AKAZEFeatures impl(options);
             impl.Create_Nonlinear_Scale_Space(image);
 
+//            int64 b2 = getTickCount();
             if (!useProvidedKeypoints)
             {
                 impl.Feature_Detection(keypoints);
             }
 
+//          int64 b3 = getTickCount();
             if (!mask.empty())
             {
                 KeyPointsFilter::runByPixelsMask(keypoints, mask.getMat());
@@ -212,6 +216,18 @@ namespace cv
                 CV_Assert((descriptors.empty() || descriptors.cols() == descriptorSize()));
                 CV_Assert((descriptors.empty() || (descriptors.type() == descriptorType())));
             }
+//          int64 b4 = getTickCount();
+//#ifdef  __ANDROID__
+//          given 900x1200 image, Create_Nonlinear_Scale_Space, Feature_Detection,      Compute_Descriptors
+//          detectAndCompute:        0.065588,                     0.014311,               0.005717, total=0.085616
+////        detectAndCompute:        0.066474,                     0.014751,               0.006672, total=0.087897
+//            __android_log_print(ANDROID_LOG_ERROR,"libdmi2","detectAndCompute:  %f,%f,%f, total=%f",
+//                    (b2-b1)/getTickFrequency(),
+//                    (b3-b2)/getTickFrequency(),
+//                    (b4-b3)/getTickFrequency(),
+//                    (b4-b1)/getTickFrequency()
+//                    );
+//#endif
         }
 
         void write(FileStorage& fs) const CV_OVERRIDE

@@ -96,19 +96,19 @@ error_exit(j_common_ptr cinfo)
 METHODDEF(void)
 output_message(j_common_ptr cinfo)
 {
-  char buffer[JMSG_LENGTH_MAX];
-
-  /* Create the message */
-  (*cinfo->err->format_message) (cinfo, buffer);
-
-#ifdef USE_WINDOWS_MESSAGEBOX
-  /* Display it in a message dialog box */
-  MessageBox(GetActiveWindow(), buffer, "JPEG Library Error",
-             MB_OK | MB_ICONERROR);
-#else
-  /* Send it to stderr, adding a newline */
-  fprintf(stderr, "%s\n", buffer);
-#endif
+//  char buffer[JMSG_LENGTH_MAX];
+//
+//  /* Create the message */
+//  (*cinfo->err->format_message) (cinfo, buffer);
+//
+//#ifdef USE_WINDOWS_MESSAGEBOX
+//  /* Display it in a message dialog box */
+//  MessageBox(GetActiveWindow(), buffer, "JPEG Library Error",
+//             MB_OK | MB_ICONERROR);
+//#else
+//  /* Send it to stderr, adding a newline */
+//  //fprintf(stderr, "%s\n", buffer);
+//#endif
 }
 
 
@@ -189,9 +189,9 @@ format_message(j_common_ptr cinfo, char *buffer)
 
   /* Format the message into the passed buffer */
   if (isstring)
-    snprintf(buffer, JMSG_LENGTH_MAX, msgtext, err->msg_parm.s);
+    SNPRINTF(buffer, JMSG_LENGTH_MAX, msgtext, err->msg_parm.s);
   else
-    snprintf(buffer, JMSG_LENGTH_MAX, msgtext,
+    SNPRINTF(buffer, JMSG_LENGTH_MAX, msgtext,
              err->msg_parm.i[0], err->msg_parm.i[1],
              err->msg_parm.i[2], err->msg_parm.i[3],
              err->msg_parm.i[4], err->msg_parm.i[5],

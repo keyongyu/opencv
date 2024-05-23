@@ -235,10 +235,12 @@ typedef enum {
      ensure that the X byte is set to 0xFF, so that it can be interpreted as an
      opaque alpha channel. */
   JCS_EXT_RGBA,           /* red/green/blue/alpha */
+  JCS_RGBA_8888=JCS_EXT_RGBA,
   JCS_EXT_BGRA,           /* blue/green/red/alpha */
   JCS_EXT_ABGR,           /* alpha/blue/green/red */
   JCS_EXT_ARGB,           /* alpha/red/green/blue */
-  JCS_RGB565              /* 5-bit red/6-bit green/5-bit blue */
+  JCS_RGB565,              /* 5-bit red/6-bit green/5-bit blue */
+  JCS_RGB_565=JCS_RGB565
 } J_COLOR_SPACE;
 
 /* DCT/IDCT algorithm options. */

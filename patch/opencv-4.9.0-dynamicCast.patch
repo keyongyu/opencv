@@ -1,0 +1,12 @@
+--- opencv_orig/modules/core/include/opencv2/core/cvstd_wrapper.hpp	2024-05-27 13:15:52
++++ opencv/modules/core/include/opencv2/core/cvstd_wrapper.hpp	2024-05-26 13:29:46
+@@ -136,7 +136,8 @@ struct Ptr : public std::shared_ptr<T>
+     Ptr<Y> constCast() const CV_NOEXCEPT { return std::const_pointer_cast<Y>(*this); }
+ 
+     template<typename Y> inline
+-    Ptr<Y> dynamicCast() const CV_NOEXCEPT { return std::dynamic_pointer_cast<Y>(*this); }
++    Ptr<Y> dynamicCast() const CV_NOEXCEPT { return std::static_pointer_cast<Y>(*this); }
++    //Ptr<Y> dynamicCast() const CV_NOEXCEPT { return std::dynamic_pointer_cast<Y>(*this); }
+ };
+ 
+ template<typename _Tp, typename ... A1> static inline

@@ -1,0 +1,178 @@
+diff --color=auto -Nuarp opencv_orig/modules/calib3d/src/calibinit.cpp opencv/modules/calib3d/src/calibinit.cpp
+--- opencv_orig/modules/calib3d/src/calibinit.cpp	2024-05-27 13:06:33
++++ opencv/modules/calib3d/src/calibinit.cpp	2024-05-25 16:31:05
+@@ -2117,7 +2117,7 @@ bool findCirclesGrid( InputArray _image, Size patternS
+     {
+         centers.clear();
+         CirclesGridFinder boxFinder(patternSize, points, parameters);
+-        try
++//        try
+         {
+             bool isFound = boxFinder.findHoles();
+             if (isFound)
+@@ -2138,12 +2138,12 @@ bool findCirclesGrid( InputArray _image, Size patternS
+                 break;  // done, return result
+             }
+         }
+-        catch (const cv::Exception& e)
+-        {
+-            CV_UNUSED(e);
+-            CV_LOG_DEBUG(NULL, "findCirclesGrid2: attempt=" << i << ": " << e.what());
+-            // nothing, next attempt
+-        }
++//        catch (const cv::Exception& e)
++//        {
++//            CV_UNUSED(e);
++//            CV_LOG_DEBUG(NULL, "findCirclesGrid2: attempt=" << i << ": " << e.what());
++//            // nothing, next attempt
++//        }
+ 
+         boxFinder.getHoles(centers);
+         if (i != attempts - 1)
+diff --color=auto -Nuarp opencv_orig/modules/calib3d/src/chessboard.cpp opencv/modules/calib3d/src/chessboard.cpp
+--- opencv_orig/modules/calib3d/src/chessboard.cpp	2024-05-27 13:06:33
++++ opencv/modules/calib3d/src/chessboard.cpp	2024-05-25 16:34:46
+@@ -1,7 +1,7 @@
+ // This file is part of OpenCV project.
+ // It is subject to the license terms in the LICENSE file found in the top-level directory
+ // of this distribution and at http://opencv.org/license.html.
+-
++#if 0
+ #include "precomp.hpp"
+ #include "opencv2/flann.hpp"
+ #include "chessboard.hpp"
+@@ -3978,3 +3978,4 @@ cv::Scalar estimateChessboardSharpness(InputArray imag
+ 
+ 
+ } // namespace cv
++#endif
+\ No newline at end of file
+diff --color=auto -Nuarp opencv_orig/modules/calib3d/src/solvepnp.cpp opencv/modules/calib3d/src/solvepnp.cpp
+--- opencv_orig/modules/calib3d/src/solvepnp.cpp	2024-05-27 13:06:33
++++ opencv/modules/calib3d/src/solvepnp.cpp	2024-05-25 16:26:31
+@@ -320,7 +320,7 @@ bool solvePnPRansac(InputArray _opoints, InputArray _i
+ 
+     opoints_inliers.resize(npoints1);
+     ipoints_inliers.resize(npoints1);
+-    try
++//    try
+     {
+        if (flags == SOLVEPNP_ITERATIVE && !useExtrinsicGuess)
+        {
+@@ -332,26 +332,26 @@ bool solvePnPRansac(InputArray _opoints, InputArray _i
+                           distCoeffs, rvec, tvec, useExtrinsicGuess,
+                           (flags == SOLVEPNP_P3P || flags == SOLVEPNP_AP3P) ? SOLVEPNP_EPNP : flags) ? 1 : -1;
+     }
+-    catch (const cv::Exception& e)
+-    {
+-        if (flags == SOLVEPNP_ITERATIVE &&
+-            npoints1 == 5 &&
+-            e.what() &&
+-            std::string(e.what()).find("DLT algorithm needs at least 6 points") != std::string::npos
+-        )
+-        {
+-            CV_LOG_INFO(NULL, "solvePnPRansac(): solvePnP stage to compute the final pose using points "
+-                "in the consensus set raised DLT 6 points exception, use result from MSS (Minimal Sample Sets) stage instead.");
+-            rvec = _local_model.col(0);    // output rotation vector
+-            tvec = _local_model.col(1);    // output translation vector
+-            result = 1;
+-        }
+-        else
+-        {
+-            // raise other exceptions
+-            throw;
+-        }
+-    }
++//    catch (const cv::Exception& e)
++//    {
++//        if (flags == SOLVEPNP_ITERATIVE &&
++//            npoints1 == 5 &&
++//            e.what() &&
++//            std::string(e.what()).find("DLT algorithm needs at least 6 points") != std::string::npos
++//        )
++//        {
++//            CV_LOG_INFO(NULL, "solvePnPRansac(): solvePnP stage to compute the final pose using points "
++//                "in the consensus set raised DLT 6 points exception, use result from MSS (Minimal Sample Sets) stage instead.");
++//            rvec = _local_model.col(0);    // output rotation vector
++//            tvec = _local_model.col(1);    // output translation vector
++//            result = 1;
++//        }
++//        else
++//        {
++//            // raise other exceptions
++//            throw;
++//        }
++//    }
+ 
+     if (result <= 0)
+     {
+@@ -911,7 +911,7 @@ int solvePnPGeneric( InputArray _opoints, InputArray _
+         IPPE::PoseSolver poseSolver;
+         Mat rvec1, tvec1, rvec2, tvec2;
+         float reprojErr1, reprojErr2;
+-        try
++//        try
+         {
+             poseSolver.solveGeneric(opoints, undistortedPoints, rvec1, tvec1, reprojErr1, rvec2, tvec2, reprojErr2);
+ 
+@@ -932,7 +932,7 @@ int solvePnPGeneric( InputArray _opoints, InputArray _
+                 vec_tvecs.push_back(tvec1);
+             }
+         }
+-        catch (...) { }
++//        catch (...) { }
+     }
+     else if (flags == SOLVEPNP_IPPE_SQUARE)
+     {
+@@ -984,8 +984,8 @@ int solvePnPGeneric( InputArray _opoints, InputArray _
+         IPPE::PoseSolver poseSolver;
+         Mat rvec1, tvec1, rvec2, tvec2;
+         float reprojErr1, reprojErr2;
+-        try
+-        {
++//        try
++//        {
+             poseSolver.solveSquare(opoints, undistortedPoints, rvec1, tvec1, reprojErr1, rvec2, tvec2, reprojErr2);
+ 
+             if (reprojErr1 < reprojErr2)
+@@ -1004,7 +1004,7 @@ int solvePnPGeneric( InputArray _opoints, InputArray _
+                 vec_rvecs.push_back(rvec1);
+                 vec_tvecs.push_back(tvec1);
+             }
+-        } catch (...) { }
++//        } catch (...) { }
+     }
+     else if (flags == SOLVEPNP_SQPNP)
+     {
+diff --color=auto -Nuarp opencv_orig/modules/calib3d/src/usac/local_optimization.cpp opencv/modules/calib3d/src/usac/local_optimization.cpp
+--- opencv_orig/modules/calib3d/src/usac/local_optimization.cpp	2024-05-27 13:06:33
++++ opencv/modules/calib3d/src/usac/local_optimization.cpp	2024-05-25 16:30:05
+@@ -519,7 +519,8 @@ class NonMinimalPolisherImpl : public NonMinimalPolish
+         points_size = quality_->getPointsSize();
+         threshold = quality_->getThreshold();
+         iou_thr = iou_thr_;
+-        is_covariance = dynamic_cast<const cv::usac::CovarianceSolver*>(solver_.get()) != nullptr;
++        //is_covariance = dynamic_cast<const cv::usac::CovarianceSolver*>(solver_.get()) != nullptr;
++        is_covariance = solver_.get()->isCovarianceSolver();
+         mask = std::vector<bool>(points_size);
+         mask_best = std::vector<bool>(points_size);
+         inliers = std::vector<int>(points_size);
+diff --color=auto -Nuarp opencv_orig/modules/calib3d/src/usac.hpp opencv/modules/calib3d/src/usac.hpp
+--- opencv_orig/modules/calib3d/src/usac.hpp	2024-05-27 13:06:33
++++ opencv/modules/calib3d/src/usac.hpp	2024-05-25 16:30:05
+@@ -157,6 +157,7 @@ class NonMinimalSolver : public Algorithm { (public)
+     virtual int estimate (const std::vector<bool>& mask, std::vector<Mat>& models,
+             const std::vector<double>& weights) = 0;
+     virtual void enforceRankConstraint (bool enforce) = 0;
++    virtual bool isCovarianceSolver(){ return false;}
+ };
+ 
+ //-------------------------- HOMOGRAPHY MATRIX -----------------------
+@@ -795,6 +796,7 @@ class CovarianceSolver : public NonMinimalSolver { (pu
+     virtual int estimate (const std::vector<bool> &new_mask, std::vector<Mat> &models,
+                   const std::vector<double> &weights) override = 0;
+     virtual void reset() = 0;
++    bool isCovarianceSolver() override { return true;}
+ };
+ class CovarianceEpipolarSolver : public CovarianceSolver {
+ public:
